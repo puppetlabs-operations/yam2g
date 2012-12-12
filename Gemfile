@@ -1,0 +1,5 @@
+source :gemcutter
+gem "json"
+gem 'munin-ruby'
+gem 'facter'
+gem 'json2graphite'
