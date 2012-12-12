@@ -7,29 +7,29 @@ require 'facter'
 require 'json2graphite'
 require 'optparse'
 
-options = {}
-OpstionsParser.new do |opts|
+options = { :port => 2003, :munin_node => 'localhost', :export_prefix => 'munin' }
+OptionParser.new do |opts|
   opts.banner = 'Usage: yam2g [options]'
 
   opts.on('-g', '--graphite-server SERVER', 'The graphite server you plan to send munin data to') do |v|
     options[:graphite_server] = v
   end
 
-  opts.on('-p', '--port PORT', 'The port of your graphite server') do |v|
-    options[:graphite_server] = v
+  opts.on('-p', '--port [PORT]', 'The port of your graphite server') do |v|
+    options[:port] = v || 2003
   end
 
-  opts.on('-m', '--munin-node NODE', 'The address to the munin node you want data from') do |v|
-    options[:munin_none] = v || 'localhost'
+  opts.on('-m', '--munin-node [NODE]', 'The address to the munin node you want data from') do |v|
+    options[:munin_node] = v || 'localhost'
   end
 
-  opts.on('-e', '--export-prefix', 'A prefix given to your exported data for Graphite organizational purposes') do |v|
+  opts.on('-e', '--export-prefix [PREFIX]', 'A prefix given to your exported data for Graphite organizational purposes') do |v|
     options[:export_prefix] = v || 'munin'
   end
-end
+end.parse!
 
-def send_metric(payload)
-  socket = TCPSocket.new(options[:graphite_server], options[:port])
+def send_metric(payload, server, port)
+  socket = TCPSocket.new(server, port)
   socket.puts payload
   socket.close
 end
@@ -48,8 +48,8 @@ node.list.each do |m|
   root[prefix].merge!(node.fetch(m))
 end
 
-graphite = Json2Graphite.to_graphite(root)
+graphite = root.to_graphite
 
 graphite.each do |g|
-  send_metric g
+  send_metric(g, options[:graphite_server], options[:port])
 end

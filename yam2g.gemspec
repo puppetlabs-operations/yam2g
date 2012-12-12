@@ -12,7 +12,7 @@ Gem::Specification.new do |gem|
   gem.homepage = 'https://github.com/puppetlabs-operations/yam2g'
 
   # ensure the gem is built out of versioned files
-   gem.files = Dir['Rakefile', '{bin,lib}/**/*', 'README*', 'LICENSE*'] & %x(git ls-files -z).split("\0")
+   gem.files = Dir['Rakefile', '{bin}/**/*', 'README*', 'LICENSE*'] & %x(git ls-files -z).split("\0")
 
    gem.executables << 'yam2g'
 

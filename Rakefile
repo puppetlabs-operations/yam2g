@@ -4,5 +4,5 @@ task :default => 'gembuild'
 
 desc "build the gem"
 task :gembuild do
-  %x(gem build ./json2graphite.gemspec)
+  %x(gem build ./yam2g.gemspec)
 end
