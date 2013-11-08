@@ -28,12 +28,6 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-def send_metric(payload, server, port)
-  socket = TCPSocket.new(server, port)
-  socket.puts payload
-  socket.close
-end
-
 node = Munin::Node.new(options[:munin_node])
 
 node.connect
@@ -50,6 +44,8 @@ end
 
 graphite = root.to_graphite
 
+socket = TCPSocket.new(options[:graphite_server], options[:port])
 graphite.each do |g|
-  send_metric(g, options[:graphite_server], options[:port])
+  socket.puts g
 end
+socket.close
